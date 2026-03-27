@@ -8,7 +8,6 @@ fi
 set -euo pipefail
 
 mapfile -t PACKAGES < <(pacman -Q)
-PACKAGES=("${PACKAGES[@]:0:10}")
 
 URL_FILE=package_urls.txt
 HASH_FILE=package_hashes.txt
@@ -65,7 +64,7 @@ for x in "${PACKAGES[@]}"; do
     elif [[ -f "/var/cache/pacman/pkg/$name-$ver-any.pkg.tar.zst" ]]; then
         cp "/var/cache/pacman/pkg/$name-$ver-any.pkg.tar.zst" "$PACKAGE_DIR"
         echo "https://mirror.msys2.org/$url_part/$name-$ver-any.pkg.tar.zst" >>"$URL_FILE"
-        THIS_FILE="$$PACKAGE_DIR/name-$ver-any.pkg.tar.zst"
+        THIS_FILE="$PACKAGE_DIR/$name-$ver-any.pkg.tar.zst"
     # Check the repository.
     elif [[ "$url_part" == "msys/x86_64" ]] && ( wget -q --show-progress -c "https://mirror.msys2.org/$url_part/$name-$ver-x86_64.pkg.tar.zst" -O "$PACKAGE_DIR/$name-$ver-x86_64.pkg.tar.zst" || ( rm "$PACKAGE_DIR/$name-$ver-x86_64.pkg.tar.zst" && false ) ); then
         echo "https://mirror.msys2.org/$url_part/$name-$ver-x86_64.pkg.tar.zst" >>"$URL_FILE"
